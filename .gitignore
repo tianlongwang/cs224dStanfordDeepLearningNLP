@@ -1,3 +1,4 @@
 .DS_Store
 __MACOSX
 assignment1/cs224d/datasets/stanfordSentimentTreebank
+*.pyc
