@@ -23,7 +23,7 @@ def softmax(x):
       maxx = np.max(x, axis=1)
       e_x = np.exp(x - maxx.reshape(x.shape[0],1))
       summ = np.sum(e_x, axis=1)
-      out = e_x / summ.reshape((x,shape[0],1))
+      out = e_x / summ.reshape((x.shape[0],1))
     else:
       e_x = np.exp(x - np.max(x))
       out = e_x / e_x.sum()
@@ -61,7 +61,7 @@ def test_softmax():
     """
     print "Running your tests..."
     ### YOUR CODE HERE
-    raise NotImplementedError
+    pass
     ### END YOUR CODE
 
 if __name__ == "__main__":
