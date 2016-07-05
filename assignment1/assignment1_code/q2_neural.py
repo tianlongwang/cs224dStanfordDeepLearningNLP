@@ -33,16 +33,15 @@ def forward_backward_prop(data, labels, params, dimensions):
 
     output = softmax(z2)
 
-    print output
-    print labels
     cost = - sum(np.log(np.sum(output * labels, axis = 1)))
 
     ### YOUR CODE HERE: backward propagation
     delta = output - labels
-    gradb2 = sigmoid_grad(cost)
-    gradW2 = np.dot(f1.T, gradb2)
-    gradb1 = sigmoid_grad(f1)
-    gradW1 =  np.dot(data.T, gradb1)
+    gradW2 = np.dot(f1.T, delta)
+    gradb2 = np.sum(delta, axis=0)
+    delta1 =  delta.dot(W2.T) * sigmoid_grad(f1)
+    gradb1 = np.sum(delta1, axis=0)
+    gradW1 =  np.dot(data.T, delta1)
     ### END YOUR CODE
 
     ### Stack gradients (do not modify)
