@@ -22,7 +22,7 @@ class Config(object):
   batch_size = 64
   label_size = 5
   hidden_size = 100
-  max_epochs = 24 
+  max_epochs = 24
   early_stopping = 2
   dropout = 0.9
   lr = 0.001
@@ -84,7 +84,7 @@ class NERModel(LanguageModel):
                          type tf.float32
 
     Add these placeholders to self as the instance variables
-  
+
       self.input_placeholder
       self.labels_placeholder
       self.dropout_placeholder
@@ -113,7 +113,7 @@ class NERModel(LanguageModel):
     Hint: The keys for the feed_dict should be a subset of the placeholder
           tensors created in add_placeholders.
     Hint: When label_batch is None, don't add a labels entry to the feed_dict.
-    
+
     Args:
       input_batch: A batch of input data.
       label_batch: A batch of label data.
@@ -210,7 +210,7 @@ class NERModel(LanguageModel):
           tf.add_to_collection('total_loss', 0.5 * self.config.l2 * tf.nn.l2_loss(U))
     output = tf.nn.dropout(y, self.dropout_placeholder)
     ### END YOUR CODE
-    return output 
+    return output
 
   def add_loss_op(self, y):
     """Adds cross_entropy_loss ops to the computational graph.
@@ -235,7 +235,7 @@ class NERModel(LanguageModel):
 
     Creates an optimizer and applies the gradients to all trainable variables.
     The Op returned by this function is what must be passed to the
-    `sess.run()` call to cause the model to train. See 
+    `sess.run()` call to cause the model to train. See
 
     https://www.tensorflow.org/versions/r0.7/api_docs/python/train.html#Optimizer
 
@@ -389,7 +389,7 @@ def test_NER():
           best_val_epoch = epoch
           if not os.path.exists("./weights"):
             os.makedirs("./weights")
-        
+
           saver.save(session, './weights/ner.weights')
         if epoch - best_val_epoch > config.early_stopping:
           break
@@ -397,7 +397,7 @@ def test_NER():
         confusion = calculate_confusion(config, predictions, model.y_dev)
         print_confusion(confusion, model.num_to_tag)
         print 'Total time: {}'.format(time.time() - start)
-      
+
       saver.restore(session, './weights/ner.weights')
       print 'Test'
       print '=-=-='
