@@ -158,7 +158,7 @@ class NERModel(LanguageModel):
     # The embedding lookup is currently only implemented for the CPU
     with tf.device('/cpu:0'):
       ### YOUR CODE HERE
-      embedding = tf.get_variable('Embedding', [len(self.wv), self.config.embed_size])
+      embedding = tf.get_variable(, [len(self.wv), self.config.embed_size])
       window = tf.nn.embedding_lookup(embedding, self.input_placeholder)
       window = tf.reshape(
         window, [-1, self.config.window_size * self.config.embed_size])

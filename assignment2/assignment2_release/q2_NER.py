@@ -191,7 +191,19 @@ class NERModel(LanguageModel):
       output: tf.Tensor of shape (batch_size, label_size)
     """
     ### YOUR CODE HERE
-    raise NotImplementedError
+    with tf.variable_scope('Layer1', initializaer = xavier_weight_init()) as scope:
+      W = tf.get_variable('W', [self.config.window_size * self.config.embed_size, self.config.hidden_size])
+      b1 = tf.get_variable('b1', [self.config.hidden_size])
+      h = tf.nn.tanh(tf.matmul(window, W) +b1)
+      if self.config.l2:
+        tf.add_to_collection('total_loss', 0.5 * self.config.l2 * tf.nn.l2_loss(W))
+    with tf.variable_scope('Layer2', initializaer = xavier_weight_init()) as scope:
+      U = tf.get_variable('U', [self.config.hidden_size, self.config.label_size])
+      b2 = tf.get_variable('b2', [self.config.label_size])
+      y = tf.nn.tanh(tf.matmul(h, U) + b2)
+      if self.config.l2:
+        tf.add_to_collection('total_loss', 0.5 * self.config.l2 * tf.nn.l2_loss(W))
+    output = tf.nn.dropout(y, self.dropout_placeholder)
     ### END YOUR CODE
     return output
 
@@ -206,7 +218,7 @@ class NERModel(LanguageModel):
       loss: A 0-d tensor (scalar)
     """
     ### YOUR CODE HERE
-    raise NotImplementedError
+    loss = tf.nn.softmax_cross_entropy_with_logits(y, self.labels_placeholder)
     ### END YOUR CODE
     return loss
 
