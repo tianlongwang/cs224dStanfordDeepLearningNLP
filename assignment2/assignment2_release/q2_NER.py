@@ -218,7 +218,9 @@ class NERModel(LanguageModel):
       loss: A 0-d tensor (scalar)
     """
     ### YOUR CODE HERE
-    loss = tf.nn.softmax_cross_entropy_with_logits(y, self.labels_placeholder)
+    cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y, self.labels_placeholder))
+    tf.add_to_collection('total_loss', cross_entropy)
+    loss = tf.add_n(tf.get_collection('total_loss'))
     ### END YOUR CODE
     return loss
 
