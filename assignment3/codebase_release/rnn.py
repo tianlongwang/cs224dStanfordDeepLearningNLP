@@ -69,11 +69,14 @@ class RNN_Model():
         '''
         with tf.variable_scope('Composition'):
             ### YOUR CODE HERE
-            pass
+            tf.get_variable('embedding', [self.vocab.total_words, self.config.           embed_size])
+            tf.get_variable('W1', [2 * self.config.embed_size, self.config.embed_size])
+            tf.get_variable('b1', [1, self.config.embed_size])
             ### END YOUR CODE
         with tf.variable_scope('Projection'):
             ### YOUR CODE HERE
-            pass
+            tf.get_variable('U', [self.config.embed_size, self.config.label_size])
+            tf.get_variable('bs', [1, self.config.label_size])
             ### END YOUR CODE
 
     def add_model(self, node):
@@ -93,7 +96,9 @@ class RNN_Model():
         """
         with tf.variable_scope('Composition', reuse=True):
             ### YOUR CODE HERE
-            pass
+            embedding = tf.get_variable('embedding')
+            W1 = tf.get_variable('W1')
+            b1 = tf.get_variable('b1')
             ### END YOUR CODE
 
 
@@ -101,13 +106,15 @@ class RNN_Model():
         curr_node_tensor = None
         if node.isLeaf:
             ### YOUR CODE HERE
-            pass
+            word_id = self.vocab.encode(node.word)
+            curr_node_tensor = tf.expand_dims(tf.gather(embedding, word_id), 0)
             ### END YOUR CODE
         else:
             node_tensors.update(self.add_model(node.left))
             node_tensors.update(self.add_model(node.right))
             ### YOUR CODE HERE
-            pass
+            child_tensor = tf.concat(1, [node_tensors[node.left], node_tensors[node.     right]])
+            curr_node_tensor = tf.nn.relu(tf.matmul(child_tensor, W1) + b1)
             ### END YOUR CODE
         node_tensors[node] = curr_node_tensor
         return node_tensors
@@ -123,7 +130,11 @@ class RNN_Model():
         """
         logits = None
         ### YOUR CODE HERE
-        pass
+        with tf.variable_scope('Projection', reuse=True):
+            U = tf.get_variable('U')
+            bs = tf.get_variable('bs')
+            logits = tf.matmul(node_tensors, U)
+            logits += bs
         ### END YOUR CODE
         return logits
 
@@ -140,7 +151,15 @@ class RNN_Model():
         """
         loss = None
         # YOUR CODE HERE
-        pass
+        with tf.variable_scope('Composition', reuse=True):
+            W1 = tf.get_variable('W1')
+        with tf.variable_scope('Projection', reuse=True):
+            U = tf.get_variable('U')
+        l2loss = tf.nn.l2_loss(W1) + tf.nn.l2_loss(U)
+
+        cross_entropy = tf.reduce_sum(
+            tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels))
+        loss = cross_entropy + self.config.l2 * l2loss
         # END YOUR CODE
         return loss
 
@@ -165,7 +184,8 @@ class RNN_Model():
         """
         train_op = None
         # YOUR CODE HERE
-        pass
+        optimizer = tf.train.GradientDescentOptimizer(self.config.lr)
+        train_op = optimizer.minimize(loss)
         # END YOUR CODE
         return train_op
 
@@ -179,7 +199,7 @@ class RNN_Model():
         """
         predictions = None
         # YOUR CODE HERE
-        pass
+        predictions = tf.argmax(y, 1)
         # END YOUR CODE
         return predictions
 

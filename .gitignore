@@ -4,3 +4,9 @@ assignment1/cs224d/datasets/stanfordSentimentTreebank
 *.pyc
 *.npy
 *.png
+
+
+assignment3/codebase_dev/trees/
+assignment3/codebase_dev/weights/
+assignment3/codebase_release/trees/
+assignment3/codebase_release/weights/
